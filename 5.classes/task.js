@@ -83,7 +83,7 @@ console.log(picknick.state); //10
 picknick.fix();
 console.log(picknick.state); //15
 
-//#2
+//2
 
 class Library extends PrintEditionItem {
     constructor(name, releaseDate, pagesCount) {
