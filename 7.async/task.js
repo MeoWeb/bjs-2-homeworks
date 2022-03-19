@@ -7,59 +7,50 @@ class AlarmClock {
     }
 
     addClock(time, callback, timerId) {
-        let now = new Date();
-        let HH = now.getHours();
-        let MM = now.getMinutes();
-        time = `${HH}:${MM}`;
 
         if (!timerId) {
             throw new Error('error text');
         }
 
-        if (this.alarmCollection.some(function(alarm) { return alarm.timerId == timerId })) {
+        if (this.alarmCollection.some((alarm) => { return alarm.timerId == timerId })) {
             console.error('error text 2');
             return;
         }
 
-        let alarm = {
+
+        this.alarmCollection.push({
             time,
             callback,
             timerId
-        }
-
-        this.alarmCollection.push(alarm);
+        });
     }
 
     removeClock(timerId) {
-        if (this.alarmCollection.filter(i => i.timerId === timerId)) {
-            this.alarmCollection.splice(this.alarmCollection.indexOf(timerId), 1);
+        let ind = (this.alarmCollection.findIndex(i => i.timerId === timerId));
+        if (ind != -1) {
+            this.alarmCollection.splice(ind, 1);
             return true;
         } else
             return false;
-
     }
 
-    getCurrentFormattedTime(time) {
-        let now = new Date();
-        let HH = now.getHours();
-        let MM = now.getMinutes();
-        if (MM < 10) {
-            MM = "0" + MM;
-        }
-        time = `${HH}:${MM}`;
-        return time;
+    getCurrentFormattedTime() {
+        return new Date().toLocaleTimeString("ru-Ru", {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
     }
 
     start() {
         function checkClock(alarm) {
-            if (new Date() === alarm.time) {
-                return callback;
+            if (this.getCurrentFormattedTime() === alarm.time) {
+                alarm.callback();
             }
         }
-        if (!this.timerId) {
-            this.timerId = setInterval(checkClock, 1000);
-        }
 
+        if (!this.timerId) {
+            this.timerId = setInterval(this.alarmCollection.forEach(checkClock.bind(this)), 1000);
+        }
     }
 
     stop() {
@@ -70,7 +61,7 @@ class AlarmClock {
     }
 
     printAlarms() {
-        this.alarmCollection.forEach(function(alarm) {
+        this.alarmCollection.forEach((alarm) => {
             console.log(`${alarm.timerId};${alarm.time}`)
         })
     }
@@ -79,5 +70,4 @@ class AlarmClock {
         this.stop();
         this.alarmCollection = [];
     }
-
 }
