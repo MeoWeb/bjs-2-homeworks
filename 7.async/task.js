@@ -7,31 +7,32 @@ class AlarmClock {
     }
 
     addClock(time, callback, timerId) {
-
         if (!timerId) {
-            throw new Error('error text');
+            throw new Error("error text");
         }
 
-        if (this.alarmCollection.some((alarm) => { return alarm.timerId == timerId })) {
-            console.error('error text 2');
+        if (
+            this.alarmCollection.some((alarm) => {
+                return alarm.timerId == timerId;
+            })
+        ) {
+            console.error("error text 2");
             return;
         }
-
 
         this.alarmCollection.push({
             time,
             callback,
-            timerId
+            timerId,
         });
     }
 
     removeClock(timerId) {
-        let ind = (this.alarmCollection.findIndex(i => i.timerId === timerId));
+        let ind = this.alarmCollection.findIndex((i) => i.timerId === timerId);
         if (ind != -1) {
             this.alarmCollection.splice(ind, 1);
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     getCurrentFormattedTime() {
@@ -49,7 +50,9 @@ class AlarmClock {
         }
 
         if (!this.timerId) {
-            this.timerId = setInterval(this.alarmCollection.forEach(checkClock.bind(this)), 1000);
+            this.timerId = setInterval(() => {
+                this.alarmCollection.forEach(checkClock.bind(this));
+            }, 1000);
         }
     }
 
@@ -62,8 +65,8 @@ class AlarmClock {
 
     printAlarms() {
         this.alarmCollection.forEach((alarm) => {
-            console.log(`${alarm.timerId};${alarm.time}`)
-        })
+            console.log(`${alarm.timerId}) ${alarm.time}`);
+        });
     }
 
     clearAlarms() {
@@ -71,3 +74,22 @@ class AlarmClock {
         this.alarmCollection = [];
     }
 }
+
+//2
+
+let phoneAlarm = new AlarmClock();
+phoneAlarm.addClock("9:00", () => console.log("Пора вставать"), 1);
+phoneAlarm.addClock("9:01", () => {
+    console.log("Давай вставай уже!");
+    phoneAlarm.removeClock(2)
+}, 2);
+//phoneAlarm.addClock("9:01", () => console.log("Иди умываться"));
+phoneAlarm.addClock("9:02", () => {
+    console.log("Вставай, а то проспишь");
+    phoneAlarm.clearAlarms();
+    phoneAlarm.printAlarms();
+}, 3);
+
+phoneAlarm.addClock("09:05", () => console.log("Вставай, а то проспишь!"), 1);
+phoneAlarm.printAlarms();
+phoneAlarm.start();
