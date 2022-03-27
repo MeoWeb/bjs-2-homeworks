@@ -1,5 +1,23 @@
 function cachingDecoratorNew(func) {
-  // Ваш код
+    let cache = [];
+
+    function wrapper(...args) {
+        const hash = args.join(',');
+        if (hash in cache) {
+            console.log("Из кеша: " + cache[hash]);
+            return "Из кэша: " + cache[hash];
+        } else {
+            let result = func.call(this, ...args);
+            cache[hash] = result;
+
+            if (cache.length > 5) {
+                cache.shift();
+            }
+            console.log("Вычисляем: " + result);
+            return "Вычисляем: " + result;
+        }
+    }
+    return wrapper;
 }
 
 
